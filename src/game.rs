@@ -6,7 +6,7 @@ pub struct GamePlugin;
 #[derive(Component)]
 struct MainCamera;
 
-fn start_game(mut command : Commands, asset_server: Res<AssetServer>) {
+fn start_game(mut command : Commands) {
 	command.spawn((Camera2dBundle {
 									transform: Transform::from_xyz(0.0, 0.0, 0.0),
 									..default()

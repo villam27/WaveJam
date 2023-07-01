@@ -18,6 +18,9 @@ pub struct FrameTime(f32);
 pub struct CurrAnimId(usize);
 
 #[derive(Component)]
+pub struct PlayerSpeed(Vec3);
+
+#[derive(Component)]
 pub struct SpriteAnimationData {
 	data: Vec<AData>,
 }
@@ -29,7 +32,6 @@ pub struct SpriteAnimationData {
  */
 #[derive(Bundle)]
 struct PlayerBodyBundle {
-	player: Player,
 	frame_time: FrameTime,
 	current_anim: CurrAnimId,
 	animation_data: SpriteAnimationData,
@@ -40,7 +42,6 @@ struct PlayerBodyBundle {
 
 #[derive(Bundle)]
 struct PlayerHeadBundle {
-	player: Player,
 	frame_time: FrameTime,
 	current_anim: CurrAnimId,
 	animation_data: SpriteAnimationData,
@@ -54,11 +55,13 @@ struct PlayerBundle
 {
 	player: Player,
 	transform: SpatialBundle,
+	speed: PlayerSpeed,
 }
 
 impl Plugin for PlayerPlugin {
 	fn build(&self, app: &mut App) {
 		app.add_startup_system(init_player)
+			.add_system(player_input)
 			.add_system(animate);
 	}
 }
@@ -80,9 +83,9 @@ fn init_player(mut command : Commands, asset_server: Res<AssetServer>, mut atlas
 	{
 		player: Player,
 		transform: SpatialBundle::default(),
+		speed: PlayerSpeed(Vec3::new(150., 150., 0.))
 	}).with_children(|parent: &mut ChildBuilder<'_, '_, '_>| {
 	parent.spawn(PlayerBodyBundle {
-		player: Player,
 		frame_time: FrameTime(0.0),
 		current_anim: CurrAnimId(0),
 		sprite: SpriteSheetBundle {
@@ -94,7 +97,6 @@ fn init_player(mut command : Commands, asset_server: Res<AssetServer>, mut atlas
 	});
 	}).with_children(|parent| {
 	parent.spawn(PlayerHeadBundle {
-		player: Player,
 		frame_time: FrameTime(0.0),
 		current_anim: CurrAnimId(0),
 		sprite: SpriteSheetBundle {
@@ -118,5 +120,28 @@ pub fn animate(mut query: Query<(&mut TextureAtlasSprite, &mut SpriteAnimationDa
 			if sprite.index > animation.data[id.0].end {sprite.index = animation.data[id.0].start;}
 			frame_time.0 -= animation.data[id.0].frame_time * frames_passed as f32;
 		}
+	}
+}
+
+pub fn player_input(keys: Res<Input<KeyCode>>, time: Res<Time>, mut query: Query<&mut Transform, With<Player>>, speed_query: Query<&mut PlayerSpeed, With<Player>>)
+{
+	let mut transform = query.single_mut();
+	let	speed = speed_query.single();
+
+	if keys.pressed(KeyCode::Right)
+	{
+		transform.translation.x += speed.0.x * time.delta_seconds();
+	}
+	if keys.pressed(KeyCode::Left)
+	{
+		transform.translation.x -= speed.0.x * time.delta_seconds();
+	}
+	if keys.pressed(KeyCode::Up)
+	{
+		transform.translation.y += speed.0.x * time.delta_seconds();
+	}
+	if keys.pressed(KeyCode::Down)
+	{
+		transform.translation.y -= speed.0.x * time.delta_seconds();
 	}
 }
