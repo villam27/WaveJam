@@ -189,11 +189,9 @@ pub fn change_head(keys: Res<Input<KeyCode>>,
 
 pub fn change_body(keys: Res<Input<KeyCode>>,
 	mut body: Query<&mut CurrAnimId, With<PlayerBody>>,
-	mut tex: Query<(&mut TextureAtlasSprite, &SpriteAnimationData), With<PlayerBody>>
 )
 {
 	let mut body_id = body.single_mut();
-	let (mut texture, data) = tex.single_mut();
 
 	if keys.any_pressed([KeyCode::Right, KeyCode::Left, KeyCode::Up, KeyCode::Down]) {
 		body_id.0 = 1;
