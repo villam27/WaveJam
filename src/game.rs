@@ -8,11 +8,11 @@ struct MainCamera;
 
 fn start_game(mut command : Commands, asset_server: Res<AssetServer>) {
 	command.spawn((Camera2dBundle {
-									transform: Transform::from_xyz(142.0, 0.0, 0.0),
+									transform: Transform::from_xyz(0.0, 0.0, 0.0),
 									..default()
 								}, MainCamera));
 	command.spawn(SpriteBundle {
-									transform: Transform::from_xyz(56.0, 242.0, 0.0),
+									transform: Transform::from_xyz(0.0, -42.0, 0.0),
 									texture: asset_server.load("player/head.png"),
 									..default()
 								});
