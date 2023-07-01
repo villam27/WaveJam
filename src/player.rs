@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use crate::bullet::{Bullet, BulletBundle, BulletDirection};
+use crate::bullet::{BulletBundle};
 
 pub struct PlayerPlugin;
 
@@ -229,16 +229,16 @@ pub fn change_head(
     let mut head_id = head.single_mut();
     let (mut texture, data) = tex.single_mut();
 
-    if keys.just_pressed(KeyCode::Right) {
+    if keys.pressed(KeyCode::Right) {
         head_id.0 = 1;
     }
-    if keys.just_pressed(KeyCode::Left) {
+    if keys.pressed(KeyCode::Left) {
         head_id.0 = 2;
     }
-    if keys.just_pressed(KeyCode::Up) {
+    if keys.pressed(KeyCode::Up) {
         head_id.0 = 3;
     }
-    if keys.just_pressed(KeyCode::Down) {
+    if keys.pressed(KeyCode::Down) {
         head_id.0 = 0;
     }
     texture.index = data.data[head_id.0].start;
@@ -258,15 +258,41 @@ pub fn shoot(
     timer.time.tick(time.delta());
     if keys.pressed(KeyCode::Right) {
         if timer.time.finished() {
-            command.spawn(BulletBundle {
-                bullet: Bullet,
-                direction: BulletDirection(Vec3::new(0., 0., 0.)),
-                sprite: SpriteBundle {
-                    transform: Transform::from_xyz(pos.translation.x, pos.translation.y, 0.0),
-                    texture: asset_server.load("player/bullet.png"),
-                    ..default()
-                },
-            });
+            command.spawn(BulletBundle::create_from_position(
+                pos.translation,
+				Vec2 {x: 450.0, y:0.0},
+                asset_server.load("player/bullet.png"),
+            ));
+            timer.time.reset();
+        }
+    }
+	if keys.pressed(KeyCode::Left) {
+        if timer.time.finished() {
+            command.spawn(BulletBundle::create_from_position(
+                pos.translation,
+				Vec2 {x: -450.0, y:0.0},
+                asset_server.load("player/bullet.png"),
+            ));
+            timer.time.reset();
+        }
+    }
+	if keys.pressed(KeyCode::Up) {
+        if timer.time.finished() {
+            command.spawn(BulletBundle::create_from_position(
+                pos.translation,
+				Vec2 {y: 450.0, x:0.0},
+                asset_server.load("player/bullet.png"),
+            ));
+            timer.time.reset();
+        }
+    }
+	if keys.pressed(KeyCode::Down) {
+        if timer.time.finished() {
+            command.spawn(BulletBundle::create_from_position(
+                pos.translation,
+				Vec2 {y: -450.0, x:0.0},
+                asset_server.load("player/bullet.png"),
+            ));
             timer.time.reset();
         }
     }

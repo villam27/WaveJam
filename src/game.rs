@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use crate::bullet::*; 
 
 const BACKGROUND_COLOR: Color = Color::rgb(0.055, 0.957, 0.988);
 pub struct GamePlugin;
@@ -19,6 +20,7 @@ fn start_game(mut command: Commands) {
 impl Plugin for GamePlugin {
     fn build(&self, app: &mut App) {
         app.insert_resource(ClearColor(BACKGROUND_COLOR))
+            .add_system(move_bullet)
             .add_startup_system(start_game);
     }
 }
