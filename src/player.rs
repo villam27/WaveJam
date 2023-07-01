@@ -49,6 +49,13 @@ struct PlayerHeadBundle {
 	sprite: SpriteSheetBundle,
 }
 
+#[derive(Bundle)]
+struct PlayerBundle
+{
+	player: Player,
+	transform: SpatialBundle,
+}
+
 impl Plugin for PlayerPlugin {
 	fn build(&self, app: &mut App) {
 		app.add_startup_system(init_player)
@@ -68,7 +75,13 @@ fn init_player(mut command : Commands, asset_server: Res<AssetServer>, mut atlas
 	
 	body_animation_data.push(AData {start: 0, end: 3, frame_time: 0.15});
 	head_animation_data.push(AData {start: 0, end: 3, frame_time: 0.25});
-	command.spawn(PlayerBodyBundle {
+
+	command.spawn(PlayerBundle 
+	{
+		player: Player,
+		transform: SpatialBundle::default(),
+	}).with_children(|parent: &mut ChildBuilder<'_, '_, '_>| {
+	parent.spawn(PlayerBodyBundle {
 		player: Player,
 		frame_time: FrameTime(0.0),
 		current_anim: CurrAnimId(0),
@@ -79,7 +92,8 @@ fn init_player(mut command : Commands, asset_server: Res<AssetServer>, mut atlas
 		},
 		animation_data: SpriteAnimationData { data: body_animation_data },
 	});
-	command.spawn(PlayerHeadBundle {
+	}).with_children(|parent| {
+	parent.spawn(PlayerHeadBundle {
 		player: Player,
 		frame_time: FrameTime(0.0),
 		current_anim: CurrAnimId(0),
@@ -90,6 +104,7 @@ fn init_player(mut command : Commands, asset_server: Res<AssetServer>, mut atlas
 			..default()
 		},
 		animation_data: SpriteAnimationData { data: head_animation_data },
+	});
 	});
 }
 
