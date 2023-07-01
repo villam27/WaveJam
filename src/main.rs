@@ -1,35 +1,38 @@
-use bevy::{prelude::*, app::PluginGroupBuilder};
+use bevy::{app::PluginGroupBuilder, prelude::*};
 use bevy_ecs_ldtk::prelude::*;
 
-mod player;
 mod game;
 mod map;
+mod player;
 
 struct MainPlugin;
 
 impl PluginGroup for MainPlugin {
-	fn build(self) -> bevy::app::PluginGroupBuilder {
-		PluginGroupBuilder::start::<Self>()
-			.add(game::GamePlugin)
-			.add(player::PlayerPlugin)
-	}
+    fn build(self) -> bevy::app::PluginGroupBuilder {
+        PluginGroupBuilder::start::<Self>()
+            .add(game::GamePlugin)
+            .add(player::PlayerPlugin)
+    }
 }
 
 const WIDTH: f32 = 640.;
 const HEIGHT: f32 = 360.;
 
 fn main() {
-	App::new()
-		.add_plugins(DefaultPlugins
-			.set(ImagePlugin::default_nearest())
-			.set(WindowPlugin {
-				primary_window : Some(Window {
-					resolution: ((WIDTH, HEIGHT).into()),
-                    title: ("Wave Jam".into()),
-                    resizable: false,
-                    ..default()}),
+    App::new()
+        .add_plugins(
+            DefaultPlugins
+                .set(ImagePlugin::default_nearest())
+                .set(WindowPlugin {
+                    primary_window: Some(Window {
+                        resolution: ((WIDTH, HEIGHT).into()),
+                        title: ("Wave Jam".into()),
+                        resizable: false,
+                        ..default()
+                    }),
                     ..default()
-				}))
+                }),
+        )
         .add_plugin(LdtkPlugin)
         .insert_resource(LdtkSettings {
             level_spawn_behavior: LevelSpawnBehavior::UseWorldTranslation {
@@ -39,6 +42,6 @@ fn main() {
             ..Default::default()
         })
         .insert_resource(LevelSelection::Index(0))
-		.add_plugins(MainPlugin)
-		.run();
+        .add_plugins(MainPlugin)
+        .run();
 }
