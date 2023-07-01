@@ -1,40 +1,44 @@
-use bevy::prelude::*;
+use bevy::{prelude::*, app::PluginGroupBuilder};
 use bevy_ecs_ldtk::prelude::*;
 
+mod player;
+mod game;
 mod map;
 
+struct MainPlugin;
+
+impl PluginGroup for MainPlugin {
+	fn build(self) -> bevy::app::PluginGroupBuilder {
+		PluginGroupBuilder::start::<Self>()
+			.add(game::GamePlugin)
+			.add(player::PlayerPlugin)
+	}
+}
+
+const WIDTH: f32 = 640.;
+const HEIGHT: f32 = 360.;
+
 fn main() {
-    App::new()
-        .add_plugins(
-            DefaultPlugins.set(ImagePlugin::default_nearest()), // prevents blurry sprites
-        )
+	App::new()
+		.add_plugins(DefaultPlugins
+			.set(ImagePlugin::default_nearest())
+			.set(WindowPlugin {
+				primary_window : Some(Window {
+					resolution: ((WIDTH, HEIGHT).into()),
+                    title: ("Wave Jam".into()),
+                    resizable: false,
+                    ..default()}),
+                    ..default()
+				}))
         .add_plugin(LdtkPlugin)
-        .add_startup_system(setup)
+        .insert_resource(LdtkSettings {
+            level_spawn_behavior: LevelSpawnBehavior::UseWorldTranslation {
+                load_level_neighbors: true,
+            },
+            set_clear_color: SetClearColor::FromLevelBackground,
+            ..Default::default()
+        })
         .insert_resource(LevelSelection::Index(0))
-        // .register_ldtk_int_cell::<map::WallBundle>(1)
-        .run();
-}
-
-fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
-    commands.spawn(Camera2dBundle::default());
-
-    commands.spawn(LdtkWorldBundle {
-        ldtk_handle: asset_server.load("top.ldtk"),
-        ..Default::default()
-    });
-}
-
-#[derive(Default, Component)]
-struct ComponentA;
-
-#[derive(Default, Component)]
-struct ComponentB;
-
-#[derive(Bundle, LdtkEntity)]
-pub struct MyBundle {
-    a: ComponentA,
-    b: ComponentB,
-    #[sprite_sheet_bundle]
-    #[bundle]
-    sprite_bundle: SpriteSheetBundle,
+		.add_plugins(MainPlugin)
+		.run();
 }
