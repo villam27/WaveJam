@@ -1,6 +1,8 @@
 use bevy::prelude::*;
 use bevy_ecs_ldtk::prelude::*;
 
+mod map;
+
 fn main() {
     App::new()
         .add_plugins(
@@ -9,7 +11,7 @@ fn main() {
         .add_plugin(LdtkPlugin)
         .add_startup_system(setup)
         .insert_resource(LevelSelection::Index(0))
-        .register_ldtk_entity::<MyBundle>("MyEntityIdentifier")
+        // .register_ldtk_int_cell::<map::WallBundle>(1)
         .run();
 }
 
@@ -17,7 +19,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.spawn(Camera2dBundle::default());
 
     commands.spawn(LdtkWorldBundle {
-        ldtk_handle: asset_server.load("my_project.ldtk"),
+        ldtk_handle: asset_server.load("top.ldtk"),
         ..Default::default()
     });
 }
