@@ -42,6 +42,8 @@ fn main() {
             ..Default::default()
         })
         .insert_resource(LevelSelection::Index(0))
+        .register_ldtk_int_cell::<map::WallBundle>(1)
         .add_plugins(MainPlugin)
+        // .add_system(map::print_walls)
         .run();
 }

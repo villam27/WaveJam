@@ -8,3 +8,11 @@ pub struct Wall;
 pub struct WallBundle {
     wall: Wall,
 }
+
+pub fn print_walls(walls: Query<&Wall>)
+{
+    let mut i = 0;
+
+    walls.for_each(|_| i += 1);
+    println!("Wall count: {i}");
+}
