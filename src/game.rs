@@ -11,11 +11,6 @@ fn start_game(mut command : Commands, asset_server: Res<AssetServer>) {
 									transform: Transform::from_xyz(0.0, 0.0, 0.0),
 									..default()
 								}, MainCamera));
-	command.spawn(SpriteBundle {
-									transform: Transform::from_xyz(0.0, -42.0, 0.0),
-									texture: asset_server.load("player/head.png"),
-									..default()
-								});
 }
 
 impl Plugin for GamePlugin {
