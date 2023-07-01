@@ -1,5 +1,7 @@
 use bevy::prelude::*;
 
+use crate::bullet::{BulletBundle, Bullet, BulletDirection};
+
 pub struct PlayerPlugin;
 
 pub struct AData {
@@ -29,6 +31,11 @@ pub struct PlayerSpeed(Vec3);
 #[derive(Component)]
 pub struct SpriteAnimationData {
 	data: Vec<AData>,
+}
+
+#[derive(Component)]
+pub struct PlayerShoot {
+	time: Timer
 }
 
 /*
@@ -64,6 +71,7 @@ struct PlayerBundle
 	player: Player,
 	transform: SpatialBundle,
 	speed: PlayerSpeed,
+	shooting_time: PlayerShoot
 }
 
 impl Plugin for PlayerPlugin {
@@ -72,6 +80,7 @@ impl Plugin for PlayerPlugin {
 			.add_system(player_input)
 			.add_system(change_head)
 			.add_system(change_body)
+			.add_system(shoot)
 			.add_system(animate);
 	}
 }
@@ -96,7 +105,8 @@ fn init_player(mut command : Commands, asset_server: Res<AssetServer>, mut atlas
 	{
 		player: Player,
 		transform: SpatialBundle::default(),
-		speed: PlayerSpeed(Vec3::new(220., 220., 0.))
+		speed: PlayerSpeed(Vec3::new(220., 220., 0.)),
+		shooting_time: PlayerShoot { time: Timer::from_seconds(0.2, TimerMode::Once)}
 	}).with_children(|parent: &mut ChildBuilder<'_, '_, '_>| {
 	parent.spawn(PlayerBodyBundle {
 		body: PlayerBody,
@@ -181,6 +191,35 @@ pub fn change_head(keys: Res<Input<KeyCode>>,
 		head_id.0 = 0;
 	}
 	texture.index = data.data[head_id.0].start;
+}
+
+pub fn shoot(mut command:Commands,
+	keys: Res<Input<KeyCode>>,
+	pos: Query<&Transform, With<Player>>,
+	mut timer_query: Query<&mut PlayerShoot, With<Player>>,
+	time: Res<Time>,
+	asset_server: Res<AssetServer>
+)
+{
+	let	pos = pos.single();
+	let mut timer = timer_query.single_mut();
+
+	timer.time.tick(time.delta());
+	if keys.pressed(KeyCode::Right){
+		if timer.time.finished()
+		{
+			command.spawn(BulletBundle {
+				bullet: Bullet,
+				direction: BulletDirection(Vec3::new(0., 0., 0.)),
+				sprite: SpriteBundle {
+					transform: Transform::from_xyz(pos.translation.x, pos.translation.y, 0.0),
+					texture: asset_server.load("player/bullet.png"),
+					..default()
+				}
+			});
+			timer.time.reset();
+		}
+	}
 }
 
 pub fn change_body(keys: Res<Input<KeyCode>>,

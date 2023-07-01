@@ -4,6 +4,7 @@ use player::PlayerPlugin;
 
 mod player;
 mod game;
+mod bullet;
 
 struct MainPlugin;
 
