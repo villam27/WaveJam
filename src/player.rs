@@ -96,7 +96,7 @@ fn init_player(mut command : Commands, asset_server: Res<AssetServer>, mut atlas
 	{
 		player: Player,
 		transform: SpatialBundle::default(),
-		speed: PlayerSpeed(Vec3::new(150., 150., 0.))
+		speed: PlayerSpeed(Vec3::new(220., 220., 0.))
 	}).with_children(|parent: &mut ChildBuilder<'_, '_, '_>| {
 	parent.spawn(PlayerBodyBundle {
 		body: PlayerBody,
@@ -146,20 +146,16 @@ pub fn player_input(keys: Res<Input<KeyCode>>, time: Res<Time>,
 	let mut transform = query.single_mut();
 	let	speed = speed_query.single();
 
-	if keys.pressed(KeyCode::Right)
-	{
+	if keys.pressed(KeyCode::D){
 		transform.translation.x += speed.0.x * time.delta_seconds();
 	}
-	else if keys.pressed(KeyCode::Left)
-	{
+	else if keys.pressed(KeyCode::Q){
 		transform.translation.x -= speed.0.x * time.delta_seconds();
 	}
-	if keys.pressed(KeyCode::Up)
-	{
+	if keys.pressed(KeyCode::Z){
 		transform.translation.y += speed.0.x * time.delta_seconds();
 	}
-	else if keys.pressed(KeyCode::Down)
-	{
+	else if keys.pressed(KeyCode::S){
 		transform.translation.y -= speed.0.x * time.delta_seconds();
 	}
 }
@@ -193,7 +189,7 @@ pub fn change_body(keys: Res<Input<KeyCode>>,
 {
 	let mut body_id = body.single_mut();
 
-	if keys.any_pressed([KeyCode::Right, KeyCode::Left, KeyCode::Up, KeyCode::Down]) {
+	if keys.any_pressed([KeyCode::Q, KeyCode::Z, KeyCode::D, KeyCode::S]) {
 		body_id.0 = 1;
 	}
 	else {
