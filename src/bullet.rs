@@ -7,11 +7,10 @@ pub struct Bullet;
 pub struct BulletDirection(pub Vec3);
 
 #[derive(Bundle)]
-pub struct BulletBundle
-{
-	pub bullet: Bullet,
-	pub direction: BulletDirection,
+pub struct BulletBundle {
+    pub bullet: Bullet,
+    pub direction: BulletDirection,
 
-	#[bundle]
-	pub sprite: SpriteBundle,
+    #[bundle]
+    pub sprite: SpriteBundle,
 }

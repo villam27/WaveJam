@@ -6,16 +6,19 @@ pub struct GamePlugin;
 #[derive(Component)]
 struct MainCamera;
 
-fn start_game(mut command : Commands) {
-	command.spawn((Camera2dBundle {
-									transform: Transform::from_xyz(0.0, 0.0, 0.0),
-									..default()
-								}, MainCamera));
+fn start_game(mut command: Commands) {
+    command.spawn((
+        Camera2dBundle {
+            transform: Transform::from_xyz(0.0, 0.0, 0.0),
+            ..default()
+        },
+        MainCamera,
+    ));
 }
 
 impl Plugin for GamePlugin {
-	fn build(&self, app: &mut App) {
-		app.insert_resource(ClearColor(BACKGROUND_COLOR))
-			.add_startup_system(start_game);
-	}
+    fn build(&self, app: &mut App) {
+        app.insert_resource(ClearColor(BACKGROUND_COLOR))
+            .add_startup_system(start_game);
+    }
 }
